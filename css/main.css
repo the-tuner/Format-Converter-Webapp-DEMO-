@@ -1,0 +1,95 @@
+@font-face {
+    font-family: 'SF Pro';
+    src: url("/assests/SF-Pro-Display-Regular.otf") format("opentype");
+}
+
+@font-face {
+    font-family: 'SF Pro Heavy';
+    src: url("/assests/SF-Pro-Display-Heavy.otf") format("opentype");
+}
+
+@font-face {
+    font-family: 'SF Pro Light';
+    src: url("/assests/SF-Pro-Display-Light.otf") format("opentype");
+}
+
+*{
+    font-family: 'SF Pro';
+    color: white;
+    user-select: none;
+    cursor: crosshair;
+}
+
+.mainframe{
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+
+    background-image: url("/assests/mac_nature.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.pivot{
+    width: 100vw;
+    height: 100vh;
+    display:flex;
+    flex-direction: row-reverse;
+    align-items: center;
+}
+
+.menu{
+    width: 9vw;
+    height: 90vh;
+
+    margin-right: 2vw;
+    border-radius: .8vw;
+
+    backdrop-filter: brightness(1.1) blur(4px) url(#glass_txture);
+    box-shadow: inset 0 0 64px 5px rgba(255, 255, 255, 0.5), 0 0 32px 5px rgba(0, 0, 0, 0.1);
+
+    transition: backdrop-filter 1s ease;
+
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+
+    container-type: inline-size; 
+    container-name: menu-box;
+
+    /* ??? */
+    position: absolute;
+}
+
+.menu:hover{
+    backdrop-filter: brightness(1.1) blur(2px) url(#glass_txture);
+    box-shadow: inset 0 0 64px 5px rgba(255, 255, 255, 0.5), 0 0 32px 5px rgba(0, 0, 0, 0.1);
+    
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dashboard{
+    width: 42vw;
+    height: 50vh;
+    
+    margin-right: 50vw;
+    margin-bottom: 30vh;
+    border-radius: .8vw;
+
+    backdrop-filter: brightness(1.1) blur(4px) url(#glass_txture);
+    box-shadow: inset 0 0 64px 5px rgba(255, 255, 255, 0.5), 0 0 32px 5px rgba(0, 0, 0, 0.1);
+
+    container-type: inline-size; 
+    container-name: menu-box;
+}
+
+.mover{
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    width: 2vw;
+    height: 5px;
+    margin-top: 5vw;
+}
