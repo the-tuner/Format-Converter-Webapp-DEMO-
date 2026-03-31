@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/header.png">
+    <link rel="stylesheet" href="main.css">
+    <title>.converted</title>
+
+    <svg width="0" height="0" style="position: absolute;">
+        <filter id="glass_txture">
+            <feImage href="assets/glass_displacement5.png" result="map" preserveAspectRatio="none"/>
+            <feDisplacementMap in2="map" in="SourceGraphic" scale="100" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+    </svg>
+</head>
+
+<body class="mainframe">
+    <div class="pivot">
+        
+        <div id="dashboard" class="dashboard" style="display: none;">
+            <div class="dashboard-content" style="padding: 20px; display: flex; flex-direction: column; gap: 15px; align-items: center;">
+                <h2 style="font-family: 'SF Pro Heavy'; margin: 0;">Chuyển đổi</h2>
+                
+                <label for="file-upload" class="custom-file-upload" style="cursor: pointer; background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 5px;">
+                    Chọn tệp tin
+                </label>
+                <input id="file-upload" type="file" style="display:none;"/>
+                <p id="file-name" style="font-size: 0.8em; color: rgba(255,255,255,0.7);"></p>
+
+                <div id="conversion-controls" style="display: none; flex-direction: column; align-items: center; gap: 10px; width: 100%;">
+                    <span>chuyển sang:</span>
+                    <select id="format-select" style="background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 5px; border-radius: 4px; width: 80%;">
+                    </select>
+                    
+                    <button id="convert-btn" style="margin-top: 10px; padding: 10px 30px; border-radius: 20px; border: none; background: white; color: black; font-weight: bold; cursor: pointer;">
+                        Bắt đầu
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="about" class="dashboard" style="display: none; width: 21vw; height: 25vh; padding: 15px; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div class="mover"></div>
+                <span onclick="document.getElementById('about').style.display='none'" style="cursor: pointer; opacity: 0.5;">✕</span>
+            </div>
+            <p style="font-family: 'SF Pro Light'; font-size: 100qi; line-height: 1.4; color: rgba(255,255,255,0.8);">
+                Project nhóm 11 <br> 2255010058 N. Hải Đăng.
+            </p>
+            <p style="font-family: 'SF Pro Light'; font-size: 5cqi; margin-top: auto; opacity: 0.5;">
+                22CN2-FIT-HAU. Presentation purpose only.
+            </p>
+        </div>
+
+        <div class="menu">
+            <p style="font-size: 30cqi; font-family: 'SF Pro'; margin-top: 23cqi; margin-left: 23cqi; margin-right: 20cqi; color: rgba(255, 255, 255, 0.5);">
+                .conv<br>erted
+            </p>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column-reverse; margin-bottom: 20cqi; align-items: center;">
+                <div class="mover"></div>
+                
+                <p id="toggle-about" style="font-family: 'SF Pro Light'; color: rgba(255, 255, 255, 0.5); cursor: pointer;">
+                    về website
+                </p>
+                
+                <p id="toggle-dashboard" style="font-family: 'SF Pro Light'; color: rgba(255, 255, 255, 0.5); cursor: pointer;">
+                    chuyển đổi
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // select
+        const menu = document.querySelector('.menu');
+        const dashboard = document.getElementById('dashboard');
+        const about = document.getElementById('about');
+        
+        const toggleDashboardBtn = document.getElementById('toggle-dashboard');
+        const toggleAboutBtn = document.getElementById('toggle-about');
+
+        const fileInput = document.getElementById('file-upload');
+        const fileNameDisplay = document.getElementById('file-name');
+        const controls = document.getElementById('conversion-controls');
+        const formatSelect = document.getElementById('format-select');
+        const convertBtn = document.getElementById('convert-btn');
+
+        // targets
+        const formats = {
+            text: ['TXT', 'DOCX', 'PDF'],
+            audio: ['MP3', 'WAV', 'AAC'],
+            image: ['PNG', 'JPG', 'WEBP'],
+            video: ['MP4', 'MOV', 'MP3'] 
+        };
+
+        // listeners
+        toggleDashboardBtn.addEventListener('click', () => {
+            dashboard.style.display = (dashboard.style.display === 'none' || dashboard.style.display === '') ? 'block' : 'none';
+            if(dashboard.style.display === 'block') { dashboard.style.left = '30vw'; dashboard.style.top = '25vh'; }
+        });
+
+        toggleAboutBtn.addEventListener('click', () => {
+            about.style.display = (about.style.display === 'none' || about.style.display === '') ? 'flex' : 'none';
+            if(about.style.display === 'flex') { about.style.left = '10vw'; about.style.top = '10vh'; }
+        });
+
+        // draggers
+        function makeDraggable(element) {
+            let isDragging = false;
+            let offsetX, offsetY;
+
+            element.addEventListener('mousedown', (e) => {
+                const safeTags = ['INPUT', 'SELECT', 'BUTTON', 'LABEL', 'OPTION', 'SPAN'];
+                if (safeTags.includes(e.target.tagName)) return;
+
+                isDragging = true;
+                element.style.cursor = 'grabbing';
+                const rect = element.getBoundingClientRect();
+                offsetX = e.clientX - rect.left;
+                offsetY = e.clientY - rect.top;
+                
+                document.querySelectorAll('.menu, .dashboard').forEach(el => el.style.zIndex = 5);
+                element.style.zIndex = 1000;
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                element.style.left = `${e.clientX - offsetX}px`;
+                element.style.top = `${e.clientY - offsetY}px`;
+                element.style.margin = "0"; 
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                element.style.cursor = 'grab';
+            });
+        }
+
+        makeDraggable(menu);
+        makeDraggable(dashboard);
+        makeDraggable(about);
+
+        // dropdown
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            fileNameDisplay.innerText = file.name;
+            const extension = file.name.split('.').pop().toLowerCase();
+            
+            let type = '';
+            if (['txt', 'docx', 'pdf'].includes(extension)) type = 'text';
+            else if (['mp3', 'wav', 'aac'].includes(extension)) type = 'audio';
+            else if (['png', 'jpg', 'webp', 'jpeg'].includes(extension)) type = 'image';
+            else if (['mp4', 'mov'].includes(extension)) type = 'video';
+
+            formatSelect.innerHTML = '';
+            if (type) {
+                formats[type].forEach(fmt => {
+                    // Don't suggest converting to the same format
+                    if (fmt.toLowerCase() !== extension) {
+                        const opt = document.createElement('option');
+                        opt.value = fmt.toLowerCase();
+                        opt.innerText = fmt;
+                        formatSelect.appendChild(opt);
+                    }
+                });
+                controls.style.display = 'flex';
+            } else {
+                alert("Định dạng không được hỗ trợ!");
+                controls.style.display = 'none';
+            }
+        });
+
+        // pylogic
+        convertBtn.addEventListener('click', async () => {
+            const file = fileInput.files[0];
+            const targetFormat = formatSelect.value;
+
+            if (!file) {
+                alert("Vui lòng chọn tệp tin!");
+                return;
+            }
+
+            // pylistener
+            convertBtn.innerText = "Đang xử lý...";
+            convertBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('target', targetFormat);
+
+            try {
+                const response = await fetch('/convert', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // downloader
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `converted_${file.name.split('.')[0]}.${targetFormat}`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    a.remove();
+                } else {
+                    const errorData = await response.json();
+                    alert("Lỗi từ server: " + errorData.error);
+                }
+            } catch (error) {
+                console.error("Lỗi kết nối:", error);
+                alert("Không thể kết nối đến server Python.");
+            } finally {
+                // reset button
+                convertBtn.innerText = "Bắt đầu";
+                convertBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+Flask
+pypandoc
+Pillow
+moviepy>=2.0.0
+imageio
+imageio-ffmpeg
+werkzeug
+decorator
+pdfminer.six

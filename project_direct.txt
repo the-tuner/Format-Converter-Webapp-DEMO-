@@ -1,0 +1,20 @@
+│   app.py
+│   Containerfile
+│   index.html
+│   main.css
+│   README.md
+│   requirements.txt
+│
+└───assets
+        cog_ico.png
+        glass_displacement.png
+        glass_displacement2.png
+        glass_displacement3.png
+        glass_displacement4.png
+        glass_displacement5.png
+        header.png
+        mac_blue.png
+        mac_nature.jpg
+        SF-Pro-Display-Heavy.otf
+        SF-Pro-Display-Light.otf
+        SF-Pro-Display-Regular.otf
